@@ -42,9 +42,10 @@ class DecoderRNN(nn.Module):
         #Concatenate the feature embedding with caption embedding
         concat_embeds = torch.cat((features.view(-1, 1,self.embed_size), embeds),1)
         #Pass the embeds to the rnn
+        concat_embeds=self.dropout(concat_embeds)
         output, _ = self.lstm(concat_embeds)
         #Pass the output to Linear layer to get the output as the vocab size
-        output=self.dropout(output)
+        
         output=self.Linear(output)
 #         output=output.argmax(2)
 #         output = output[:,1:,:]
@@ -55,8 +56,6 @@ class DecoderRNN(nn.Module):
         " accepts pre-processed image tensor (inputs) and returns predicted sentence (list of tensor ids of length max_len) "
         sentense = []
         output = inputs
-        h=torch.zeros((1,1,512)).to(device)
-        c=h
         for i in range(max_len):
             output, states = self.lstm(output,states)
             output = self.Linear(output)
