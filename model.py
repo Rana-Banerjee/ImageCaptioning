@@ -33,7 +33,8 @@ class DecoderRNN(nn.Module):
         self.word_embedding = nn.Embedding(vocab_size, embed_size)
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers)
         self.Linear = nn.Linear(hidden_size, vocab_size)
-        self.sm = nn.Softmax()
+        self.dropout= nn.Dropout(0.3)
+#         self.sm = nn.Softmax()
     
     def forward(self, features, captions):
         # Get caption embedding
@@ -43,6 +44,7 @@ class DecoderRNN(nn.Module):
         #Pass the embeds to the rnn
         output, _ = self.lstm(concat_embeds)
         #Pass the output to Linear layer to get the output as the vocab size
+        output=self.dropout(output)
         output=self.Linear(output)
 #         output=output.argmax(2)
 #         output = output[:,1:,:]
